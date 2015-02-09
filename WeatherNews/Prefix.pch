@@ -1,0 +1,16 @@
+//
+//  Prefix.pch
+//  WeatherNews
+//
+//  Created by ValeryV on 2/7/15.
+//
+//
+
+#ifdef __OBJC__
+
+    #import <Foundation/Foundation.h>
+    #import <UIKit/UIKit.h>
+    #import "Constants.h"
+    #import "Extensions.h"
+
+#endif
