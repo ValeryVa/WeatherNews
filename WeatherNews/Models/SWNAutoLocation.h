@@ -10,6 +10,8 @@
 #import "SWNWeatherCondition.h"
 #import "RLMArray.h"
 
+extern NSString* const kSWNAutoLocationID;
+
 @interface SWNAutoLocation : SWNLocation
 
 @end

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="P9k-0T-Mw8">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -698,6 +697,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="autoLocationIconImageView" destination="ofh-es-EwY" id="Z4y-Vk-q0A"/>
                         <outlet property="changeOfRainLabel" destination="g2O-lX-Ib7" id="l8f-Vf-urg"/>
                         <outlet property="conditionImageView" destination="BW8-eL-r9A" id="AEY-pd-75h"/>
                         <outlet property="currentConditionLabel" destination="BKo-A9-HKH" id="MVE-wA-hK0"/>

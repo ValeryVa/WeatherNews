@@ -9,6 +9,8 @@
 #import "SWNLocationsViewController.h"
 #import "SWNWeatherTableCell.h"
 #import "SWNWeatherFeed.h"
+#import "NSUserDefaults+Weather.h"
+#import <SVProgressHUD/SVProgressHUD.h>
 
 #import <Realm/Realm.h>
 #import <extobjc.h>
@@ -182,7 +184,6 @@
     return cell;
 }
 
-
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return NO;
@@ -196,6 +197,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    SWNLocation* location = self.locations[indexPath.row];
+    [[SWNWeatherFeed feed] updateCurrentLocation:location];
+    
+    [SVProgressHUD showInfoWithStatus:NSLocalizedString(@"Current location has been changed", @"")];
 }
 
 
@@ -208,6 +214,14 @@
     {
         NSIndexPath* indexPath = [self.tableView indexPathForCell:cell];
         SWNLocation* location = self.locations[indexPath.row];
+        
+        SWNWeatherFeed* feed = [SWNWeatherFeed feed];
+        NSString* currentLocationID = [feed currentLocationID];
+        if ([location.locationID isEqualToString:currentLocationID])
+        {
+            [feed updateCurrentLocation:self.locations[(indexPath.row + 1) % self.locations.count]];
+        }
+        
         [self.locations removeObjectAtIndex:indexPath.row];
         
         [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];

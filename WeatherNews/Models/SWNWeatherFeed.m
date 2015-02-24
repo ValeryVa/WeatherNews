@@ -70,7 +70,8 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
 
 + (NSDictionary *)defaultPropertyValues
 {
-    return @{NSStringFromSelector(@selector(feedID)):kSWNWeatherFeedID};
+    return @{NSStringFromSelector(@selector(feedID)):kSWNWeatherFeedID,
+             NSStringFromSelector(@selector(currentLocationID)):@""};
 }
 
 + (NSString *)primaryKey
@@ -152,7 +153,12 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
         {
             [realm deleteObject:feed.autoLocation];
         }
-        feed.autoLocation = [[SWNAutoLocation alloc] initWithObject:location];;
+        feed.autoLocation = [[SWNAutoLocation alloc] initWithObject:location];
+        if (feed.currentLocationID == nil && location)
+        {
+            feed.currentLocationID = location.locationID;
+        }
+        
         [realm commitWriteTransaction];
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -195,6 +201,8 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
     
     @synchronized(self)
     {
+        __block NSString* locationID = location.locationID;
+        
         dispatch_async([SWNDBQueue dbQueue], ^{
 
             RLMRealm* realm = [RLMRealm defaultRealm];
@@ -206,7 +214,7 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
             for (NSInteger i = 0; i < feed.locations.count; i++)
             {
                 SWNLocation* savedLocation = feed.locations[i];
-                if ([savedLocation.locationID isEqualToString:location.locationID])
+                if ([savedLocation.locationID isEqualToString:locationID])
                 {
                     index = i;
                     break;
@@ -219,6 +227,36 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
 
         });
     }
+}
+
+- (void)updateCurrentLocation:(SWNLocation*)location
+{
+    __block NSString* locationID = location.locationID;
+    [SWNDBQueue performDBActionWithBlock:^{
+       
+        RLMRealm* realm = [RLMRealm defaultRealm];
+        SWNWeatherFeed* feed = [SWNWeatherFeed fetchWeatherFeedInRealm:realm];
+        
+        [realm beginWriteTransaction];
+        feed.currentLocationID = locationID;
+        [realm commitWriteTransaction];
+        
+    }];
+}
+
+- (SWNLocation*)fetchCurrentLocation
+{
+    RLMRealm* realm = [RLMRealm defaultRealm];
+    
+    SWNWeatherFeed* feed = [SWNWeatherFeed fetchWeatherFeedInRealm:realm];
+    
+    if (feed.currentLocationID.length == 0)
+        return nil;
+    
+    if ([feed.currentLocationID isEqualToString:kSWNAutoLocationID])
+        return [SWNAutoLocation objectInRealm:realm forPrimaryKey:kSWNAutoLocationID];
+    
+    return [SWNLocation objectInRealm:realm forPrimaryKey:feed.currentLocationID];
 }
 
 #pragma mark -

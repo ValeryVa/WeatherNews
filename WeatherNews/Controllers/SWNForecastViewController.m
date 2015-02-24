@@ -69,10 +69,10 @@
 - (void)reloadData
 {
     SWNWeatherFeed* feed = [SWNWeatherFeed feed];
-    if (feed.autoLocation)
+    SWNLocation* location = [feed fetchCurrentLocation];
+    if (location)
     {
         self.forecast = [NSMutableArray array];
-        SWNAutoLocation* location = feed.autoLocation;
         for (NSInteger i = 0; i < location.forecast.count; i++)
         {
             SWNWeatherCondition* condition = [[SWNWeatherCondition alloc] initWithObject:location.forecast[i]];

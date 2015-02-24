@@ -109,14 +109,12 @@ static NSInteger kWWODefaultForecastTimePeriod = 24;
             q = [NSString stringWithFormat:@"%f,%f", location.latitude, location.longitude];
         }
         
-        BOOL isAutoLocation = [location isKindOfClass:[SWNAutoLocation class]];
-        
         requestMethod = @"GET";
         requestURL = [SWNWorldWeatherOnline URLWithPath:kWWOWeatherPath];
         parameters = @{kWWOQueryKey:q,
                        kWWOFormatKey:kWWOJSONKey,
                        kWWOAPIKey:_apiKey,
-                       kWWONumOfForecastDaysKey:(isAutoLocation) ? @(kWWOFullForecastNumOfDays) :@(kWWODefaultForecastNumOfDays),
+                       kWWONumOfForecastDaysKey:@(kWWOFullForecastNumOfDays),
                        kWWOForecastTimePeriodKey:@(kWWODefaultForecastTimePeriod)};
 
     }else

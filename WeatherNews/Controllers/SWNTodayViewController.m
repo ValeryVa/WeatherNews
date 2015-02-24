@@ -20,6 +20,7 @@
 @interface SWNTodayViewController()
 
 @property (weak, nonatomic) IBOutlet UIView *todayContainer;
+@property (weak, nonatomic) IBOutlet UIImageView *autoLocationIconImageView;
 @property (weak, nonatomic) IBOutlet UILabel *locationNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *currentConditionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *changeOfRainLabel;
@@ -79,7 +80,7 @@
 
 - (void)updateUIWithWeatherFeed:(SWNWeatherFeed*)feed
 {
-    SWNAutoLocation* location = feed.autoLocation;
+    SWNLocation* location = [feed fetchCurrentLocation];
     BOOL isDataInvalid = location == nil || location.forecast.count == 0;
     
     if (self.todayContainer.hidden)
@@ -90,6 +91,7 @@
         if (condition)
         {
             self.locationNameLabel.text = location.fullLocationName;
+            self.autoLocationIconImageView.hidden = ![location isKindOfClass:[SWNAutoLocation class]];
             
             SWNUnitOfTemperatureType temperatureType = [NSUserDefaults standardUserDefaults].unitOfTemperature;
             BOOL isInCelcius = temperatureType == SWNUnitOfTemperatureCelsius;

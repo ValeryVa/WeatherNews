@@ -12,7 +12,7 @@
 
 @implementation SWNAutoLocation
 
-static NSString* kSWNAutoLocationID = @"AutoLocation";
+NSString* const kSWNAutoLocationID = @"AutoLocation";
 
 + (NSDictionary *)defaultPropertyValues
 {

@@ -16,9 +16,13 @@ typedef void(^SWNWeatherFeedLocationCallback)(SWNLocation* location);
 
 @property RLMArray<SWNLocation>* locations;
 @property SWNAutoLocation* autoLocation;
+@property NSString* currentLocationID;
 
 + (instancetype)feed;
 - (void)addLocation:(SWNLocation*)location;
 - (void)removeLocation:(SWNLocation*)location;
+- (void)updateCurrentLocation:(SWNLocation*)location;
+
+- (SWNLocation*)fetchCurrentLocation;
 
 @end
