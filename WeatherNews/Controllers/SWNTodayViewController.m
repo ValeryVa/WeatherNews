@@ -34,7 +34,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *windDirectionLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *conditionImageView;
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingActivityIndicator;
 @property (nonatomic, strong, readonly) UILabel* noDataLabel;
 
 @property (nonatomic, strong) RLMNotificationToken* realmToken;
@@ -138,15 +137,9 @@
     {
         self.todayContainer.hidden = isDataInvalid;
         self.noDataLabel.hidden = !isDataInvalid;
-        
-        if (isDataInvalid)
-            [self.loadingActivityIndicator startAnimating];
-        else
-            [self.loadingActivityIndicator stopAnimating];
     }else
     {
         self.noDataLabel.hidden = YES;
-        [self.loadingActivityIndicator stopAnimating];
     }
 
     if (isDataInvalid == NO)

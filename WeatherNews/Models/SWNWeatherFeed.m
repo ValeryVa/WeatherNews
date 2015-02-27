@@ -163,6 +163,7 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
                                                                                           [self updateCurrentLocationWithCLLocation:self.currentGeolocation];
                                                                                   }
                                                                                   
+                                                                                  self.internetConnectionAvailable = isReachable;
                                                                               }];
 }
 

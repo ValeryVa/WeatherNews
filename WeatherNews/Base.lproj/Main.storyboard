@@ -304,10 +304,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="487"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Ha8-GU-4cQ">
-                                <rect key="frame" x="281" y="225" width="37" height="37"/>
-                                <color key="color" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </activityIndicatorView>
                             <view contentMode="scaleToFill" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="rrK-NM-2ui" userLabel="MainDivider">
                                 <rect key="frame" x="150" y="0.0" width="300" height="55"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -672,8 +668,6 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="ciX-rq-12N" secondAttribute="centerY" id="5JD-c0-xSa"/>
-                            <constraint firstAttribute="centerY" secondItem="Ha8-GU-4cQ" secondAttribute="centerY" id="BAh-C8-LnE"/>
-                            <constraint firstAttribute="centerX" secondItem="Ha8-GU-4cQ" secondAttribute="centerX" id="FXM-iv-9XR"/>
                             <constraint firstAttribute="centerX" secondItem="rrK-NM-2ui" secondAttribute="centerX" id="JZb-p8-CsN"/>
                             <constraint firstItem="rrK-NM-2ui" firstAttribute="height" secondItem="TOH-3D-K9L" secondAttribute="height" id="LM5-58-1c8"/>
                             <constraint firstAttribute="centerX" secondItem="ciX-rq-12N" secondAttribute="centerX" id="M2a-sg-mAV"/>
@@ -702,7 +696,6 @@
                         <outlet property="changeOfRainLabel" destination="g2O-lX-Ib7" id="l8f-Vf-urg"/>
                         <outlet property="conditionImageView" destination="BW8-eL-r9A" id="AEY-pd-75h"/>
                         <outlet property="currentConditionLabel" destination="BKo-A9-HKH" id="MVE-wA-hK0"/>
-                        <outlet property="loadingActivityIndicator" destination="Ha8-GU-4cQ" id="mbZ-Kh-Gey"/>
                         <outlet property="locationNameLabel" destination="B1P-Er-9WD" id="XN1-Ya-D68"/>
                         <outlet property="precipitationLabel" destination="oAs-m5-Zt5" id="eUB-Xh-1KE"/>
                         <outlet property="pressureLabel" destination="Jnt-5j-2bv" id="yb0-Q9-bes"/>
