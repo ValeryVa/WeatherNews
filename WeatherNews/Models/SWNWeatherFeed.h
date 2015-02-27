@@ -19,6 +19,9 @@ typedef void(^SWNWeatherFeedLocationCallback)(SWNLocation* location);
 @property NSString* currentLocationID;
 
 + (instancetype)feed;
+
+- (void)updateFeed;
+
 - (void)addLocation:(SWNLocation*)location;
 - (void)removeLocation:(SWNLocation*)location;
 - (void)updateCurrentLocation:(SWNLocation*)location;

@@ -7,6 +7,9 @@
 //
 
 #import "SWNAppAppearance.h"
+#import <JDStatusBarNotification/JDStatusBarNotification.h>
+
+NSString* const kSWNStatusBarNotificationStyle = @"SWNDefault";
 
 @implementation SWNAppAppearance
 
@@ -27,6 +30,17 @@
     [[UITabBarItem appearance] setTitleTextAttributes:@{NSFontAttributeName: [self semiboldFontWithSize:10],
                                                         NSForegroundColorAttributeName: [UIColor colorWithHex:@"2f91ff"]}
                                              forState:UIControlStateSelected];
+    
+    [JDStatusBarNotification addStyleNamed:kSWNStatusBarNotificationStyle prepare:^JDStatusBarStyle *(JDStatusBarStyle *style) {
+        
+        style.barColor = [UIColor colorWithHex:@"fecb45"];
+        style.textColor = [UIColor colorWithHex:@"333333"];
+        style.font = [SWNAppAppearance lightFontWithSize:12];
+        style.animationType = JDStatusBarAnimationTypeMove;
+        
+        return style;
+        
+    }];
 }
 
 + (UIFont*)regularFontWithSize:(CGFloat)size

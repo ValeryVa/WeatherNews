@@ -11,6 +11,8 @@
 #import "SWNWeatherFeed.h"
 #import "SWNWeatherDisplayableItem.h"
 
+#import "UIViewController+SWNAdditions.h"
+#import <AFNetworking/AFNetworkReachabilityManager.h>
 #import <Realm/Realm.h>
 #import <extobjc.h>
 
@@ -59,7 +61,16 @@
         [self reloadData];
         
     }];
+}
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if ([[AFNetworkReachabilityManager sharedManager] isReachable] == NO)
+    {
+        [self showInternetConnectionErrorAsAlert:NO];
+    }
 }
 
 #pragma mark -

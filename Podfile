@@ -13,3 +13,5 @@ pod 'CLLocationManager-blocks'
 pod 'PSTAlertController', '1.1'
 pod 'SVProgressHUD', :head
 pod 'SWTableViewCell', '0.3.7'
+pod 'Masonry', '0.6'
+pod 'JDStatusBarNotification', '1.5'

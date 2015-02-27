@@ -37,6 +37,8 @@
 		5F67B5B21A88489E00BD89A3 /* SWNSearchTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5F67B5B11A88489E00BD89A3 /* SWNSearchTableCell.xib */; };
 		5F67B5B81A88530200BD89A3 /* SWNCustomActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67B5B71A88530200BD89A3 /* SWNCustomActivityItemProvider.m */; };
 		5F67B5BB1A88884D00BD89A3 /* UIView+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67B5BA1A88884D00BD89A3 /* UIView+Extensions.m */; };
+		5F7070101AA111D600BAD343 /* SWNFrameworksConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F70700F1AA111D600BAD343 /* SWNFrameworksConfiguration.m */; };
+		5F7070131AA1281600BAD343 /* UIViewController+SWNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7070121AA1281600BAD343 /* UIViewController+SWNAdditions.m */; };
 		5F979A611A83167100151148 /* SWNWeatherTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F979A601A83167100151148 /* SWNWeatherTableCell.m */; };
 		5F979A631A83168200151148 /* SWNWeatherTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5F979A621A83168200151148 /* SWNWeatherTableCell.xib */; };
 		5FA0D4BE1A8634090071704E /* SWNWorldWeatherOnline.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA0D4BD1A8634090071704E /* SWNWorldWeatherOnline.m */; };
@@ -117,6 +119,10 @@
 		5F67B5B71A88530200BD89A3 /* SWNCustomActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWNCustomActivityItemProvider.m; sourceTree = "<group>"; };
 		5F67B5B91A88884D00BD89A3 /* UIView+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extensions.h"; sourceTree = "<group>"; };
 		5F67B5BA1A88884D00BD89A3 /* UIView+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extensions.m"; sourceTree = "<group>"; };
+		5F70700E1AA111D600BAD343 /* SWNFrameworksConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWNFrameworksConfiguration.h; sourceTree = "<group>"; };
+		5F70700F1AA111D600BAD343 /* SWNFrameworksConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWNFrameworksConfiguration.m; sourceTree = "<group>"; };
+		5F7070111AA1281600BAD343 /* UIViewController+SWNAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SWNAdditions.h"; sourceTree = "<group>"; };
+		5F7070121AA1281600BAD343 /* UIViewController+SWNAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SWNAdditions.m"; sourceTree = "<group>"; };
 		5F979A5F1A83167100151148 /* SWNWeatherTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWNWeatherTableCell.h; sourceTree = "<group>"; };
 		5F979A601A83167100151148 /* SWNWeatherTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWNWeatherTableCell.m; sourceTree = "<group>"; };
 		5F979A621A83168200151148 /* SWNWeatherTableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SWNWeatherTableCell.xib; sourceTree = "<group>"; };
@@ -316,6 +322,8 @@
 				5F67B5B71A88530200BD89A3 /* SWNCustomActivityItemProvider.m */,
 				5F67B5B91A88884D00BD89A3 /* UIView+Extensions.h */,
 				5F67B5BA1A88884D00BD89A3 /* UIView+Extensions.m */,
+				5F7070111AA1281600BAD343 /* UIViewController+SWNAdditions.h */,
+				5F7070121AA1281600BAD343 /* UIViewController+SWNAdditions.m */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -337,6 +345,8 @@
 				5FA0D4C41A8639100071704E /* NSUserDefaults+Weather.m */,
 				5F5859921A869FC800F4521F /* SWNDBQueue.h */,
 				5F5859931A869FC800F4521F /* SWNDBQueue.m */,
+				5F70700E1AA111D600BAD343 /* SWNFrameworksConfiguration.h */,
+				5F70700F1AA111D600BAD343 /* SWNFrameworksConfiguration.m */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -516,6 +526,7 @@
 				5FA0D4C11A8636670071704E /* SWNWeatherRequest.m in Sources */,
 				5F1D28A41A8162D700B4C164 /* AppDelegate.m in Sources */,
 				5F67B5BB1A88884D00BD89A3 /* UIView+Extensions.m in Sources */,
+				5F7070131AA1281600BAD343 /* UIViewController+SWNAdditions.m in Sources */,
 				5F67B5A61A882F7B00BD89A3 /* NSString+Weather.m in Sources */,
 				5F052BCF1A840880009E5BE8 /* SWNLocationsViewController.m in Sources */,
 				5FA0D4CC1A863E0F0071704E /* SWNWWOLocationsSerializer.m in Sources */,
@@ -525,6 +536,7 @@
 				5F67B5B81A88530200BD89A3 /* SWNCustomActivityItemProvider.m in Sources */,
 				5F58599A1A87BE7900F4521F /* SWNAutoLocation.m in Sources */,
 				5F1D28E71A820DBC00B4C164 /* SWNForecastViewController.m in Sources */,
+				5F7070101AA111D600BAD343 /* SWNFrameworksConfiguration.m in Sources */,
 				5F5859911A8689F200F4521F /* SWNLocation.m in Sources */,
 				5F67B5B01A88489100BD89A3 /* SWNSearchTableCell.m in Sources */,
 				5FA0D4C51A8639100071704E /* NSUserDefaults+Weather.m in Sources */,

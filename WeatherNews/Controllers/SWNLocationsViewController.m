@@ -10,10 +10,17 @@
 #import "SWNWeatherTableCell.h"
 #import "SWNWeatherFeed.h"
 #import "NSUserDefaults+Weather.h"
+#import "SWNAppAppearance.h"
+#import "UIViewController+SWNAdditions.h"
+
 #import <SVProgressHUD/SVProgressHUD.h>
+#import <AFNetworking/AFNetworkReachabilityManager.h>
+#import <PSTAlertController/PSTAlertController.h>
+#import <Masonry/Masonry.h>
 
 #import <Realm/Realm.h>
 #import <extobjc.h>
+
 
 @interface SWNLocationsViewController () <UITableViewDataSource, UITableViewDelegate, SWTableViewCellDelegate>
 
@@ -25,6 +32,8 @@
 @property (nonatomic, strong) RLMNotificationToken* realmToken;
 @property (nonatomic, strong) id userDefaultsObserver;
 
+@property (nonatomic, strong, readonly) UILabel* noLocationsLabel;
+
 
 @end
 
@@ -32,6 +41,7 @@
 
 @synthesize gradientLayer = _gradientLayer;
 @synthesize locations = _locations;
+@synthesize noLocationsLabel = _noLocationsLabel;
 
 - (CAGradientLayer *)gradientLayer
 {
@@ -51,6 +61,27 @@
     }
     
     return _gradientLayer;
+}
+
+- (UILabel *)noLocationsLabel
+{
+    if (_noLocationsLabel == nil)
+    {
+        _noLocationsLabel = [[self class] createEmptyDataSourceLabel];
+
+        [self.view addSubview:_noLocationsLabel];
+        
+        UIView* superview = self.view;
+        [_noLocationsLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+           
+            make.centerY.equalTo(superview).with.offset(-20);
+            make.left.equalTo(superview.mas_left).with.offset(10);
+            make.right.equalTo(superview.mas_right).with.offset(-10);
+            
+        }];
+    }
+    
+    return _noLocationsLabel;
 }
 
 - (NSMutableArray *)locations
@@ -141,6 +172,18 @@
     [self.tableView reloadData];
     
     self.tableView.hidden = (self.locations.count == 0);
+    self.noLocationsLabel.hidden = (self.locations.count > 0);
+}
+
+- (IBAction)addLocationButtonPressed:(id)sender
+{
+    if ([[AFNetworkReachabilityManager sharedManager] isReachable] == NO)
+    {
+        [self showInternetConnectionErrorAsAlert:YES];
+        return;
+    }
+    
+    [self performSegueWithIdentifier:@"addLocationAction" sender:self];
 }
 
 - (IBAction)doneButtonPressed:(id)sender
@@ -219,7 +262,10 @@
         NSString* currentLocationID = [feed currentLocationID];
         if ([location.locationID isEqualToString:currentLocationID])
         {
-            [feed updateCurrentLocation:self.locations[(indexPath.row + 1) % self.locations.count]];
+            if (self.locations.count > 1)
+                [feed updateCurrentLocation:self.locations[(indexPath.row + 1) % self.locations.count]];
+            else
+                [feed updateCurrentLocation:nil];
         }
         
         [self.locations removeObjectAtIndex:indexPath.row];

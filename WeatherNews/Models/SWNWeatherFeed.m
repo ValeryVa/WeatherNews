@@ -11,6 +11,7 @@
 
 #import <Realm/Realm.h>
 #import <CLLocationManager-blocks/CLLocationManager+blocks.h>
+#import <AFNetworking/AFNetworkReachabilityManager.h>
 #import <extobjc.h>
 
 #import "SWNWeatherClient.h"
@@ -21,7 +22,13 @@
 @property NSString* feedID;
 
 @property (nonatomic, strong) CLLocationManager* locationManager;
+@property (nonatomic, strong) id reachabilityObserver;
 @property (nonatomic, strong) NSString* locationRequestID;
+@property (nonatomic, strong) CLLocation* currentGeolocation;
+
+@property (nonatomic) BOOL internetConnectionAvailable;
+@property (nonatomic) BOOL locationEnabled;
+@property (nonatomic) BOOL currentLocationFetched;
 
 @end
 
@@ -59,13 +66,25 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
     return [SWNWeatherFeed objectInRealm:realm forPrimaryKey:kSWNWeatherFeedID];
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.reachabilityObserver];
+    self.reachabilityObserver = nil;
+}
+
 #pragma mark -
 #pragma mark Realm methods
 
 + (NSArray *)ignoredProperties
 {
     return @[NSStringFromSelector(@selector(locationManager)),
-             NSStringFromSelector(@selector(locationRequestID))];
+             NSStringFromSelector(@selector(locationRequestID)),
+             NSStringFromSelector(@selector(reachabilityObserver)),
+             NSStringFromSelector(@selector(internetConnectionAvailable)),
+             NSStringFromSelector(@selector(locationEnabled)),
+             NSStringFromSelector(@selector(currentLocationFetched)),
+             NSStringFromSelector(@selector(currentGeolocation))];
 }
 
 + (NSDictionary *)defaultPropertyValues
@@ -82,11 +101,30 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
 #pragma mark -
 #pragma mark Initialization
 
-- (void)commonInitialize
+- (void)initializeLocationManager
 {
     self.locationManager = [CLLocationManager updateManagerWithAccuracy:kSWNWeatherLocationAccuracyInMeters
                                                             locationAge:kCLLocationAgeFilterNone
                                                 authorizationDesciption:CLLocationUpdateAuthorizationDescriptionWhenInUse];
+    
+    @weakify(self)
+    [self.locationManager didChangeAuthorizationStatusWithBlock:^(CLLocationManager *manager, CLAuthorizationStatus status) {
+        
+        @strongify(self)
+        
+        if (self.locationEnabled == NO && [CLLocationManager isLocationUpdatesAvailable])
+            [self startUpdatingLocation];
+        
+    }];
+}
+
+- (void)startUpdatingLocation
+{
+    self.locationEnabled = [CLLocationManager isLocationUpdatesAvailable];
+
+    if (self.locationEnabled == NO)
+        return;
+    
     @weakify(self)
     [self.locationManager startUpdatingLocationWithUpdateBlock:^(CLLocationManager *manager, CLLocation *location, NSError *error, BOOL *stopUpdating) {
         
@@ -94,16 +132,67 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
         if (location)
         {
             *stopUpdating = YES;
+            self.currentLocationFetched = NO;
             [self updateCurrentLocationWithCLLocation:location];
         }
         
+        if (error)
+        {
+            *stopUpdating = YES;
+            DEBUG_LOG(@"Location manager error: %@", error);
+        }
+        
     }];
+}
+
+- (void)initializeReachability
+{
+    @weakify(self)
+    self.reachabilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:AFNetworkingReachabilityDidChangeNotification
+                                                                                  object:nil
+                                                                                   queue:[NSOperationQueue mainQueue]
+                                                                              usingBlock:^(NSNotification *note) {
+                                                                                  
+                                                                                  @strongify(self)
+                                                                                  BOOL isReachable = [[AFNetworkReachabilityManager sharedManager] isReachable];
+                                                                                  if (self.internetConnectionAvailable == NO && isReachable)
+                                                                                  {
+                                                                                      [self updateWeatherConditions];
+                                                                                      
+                                                                                      if (self.currentLocationFetched == NO)
+                                                                                          [self updateCurrentLocationWithCLLocation:self.currentGeolocation];
+                                                                                  }
+                                                                                  
+                                                                              }];
+}
+
+- (void)commonInitialize
+{
+    [self initializeLocationManager];
+    [self initializeReachability];
+
+    [self updateFeed];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFeed) name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
+- (void)updateWeatherConditions
+{
+    self.internetConnectionAvailable = [[AFNetworkReachabilityManager sharedManager] isReachable];
+    if (self.internetConnectionAvailable == NO)
+        return;
     
     for (NSInteger i = 0; i < self.locations.count; i++)
     {
         SWNLocation* location = self.locations[i];
         [self updateWeatherConditionsForLocation:location];
     }
+}
+
+- (void)updateFeed
+{
+    [self startUpdatingLocation];
+    [self updateWeatherConditions];
 }
 
 #pragma mark -
@@ -115,8 +204,11 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
     {
         [[SWNWeatherClient instance] cancelRequestWithID:self.locationRequestID];
         self.locationRequestID = nil;
-        
     }
+    
+    self.currentGeolocation = location;
+    if (self.currentGeolocation == nil)
+        return;
     
     @weakify(self)
     SWNWeatherRequest* request = [SWNWeatherRequest locationsWithLatitude:location.coordinate.latitude
@@ -127,6 +219,8 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
         {
             @strongify(self)
             self.locationRequestID = nil;
+            self.currentLocationFetched = YES;
+            
             SWNLocation* autoLocation = [results firstObject];
             if (autoLocation)
             {
@@ -154,9 +248,9 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
             [realm deleteObject:feed.autoLocation];
         }
         feed.autoLocation = [[SWNAutoLocation alloc] initWithObject:location];
-        if (feed.currentLocationID == nil && location)
+        if (feed.currentLocationID.length == 0 && location)
         {
-            feed.currentLocationID = location.locationID;
+            feed.currentLocationID = feed.autoLocation.locationID;
         }
         
         [realm commitWriteTransaction];
@@ -251,7 +345,9 @@ static NSString* kSWNWeatherFeedID = @"__weather__feed__";
     SWNWeatherFeed* feed = [SWNWeatherFeed fetchWeatherFeedInRealm:realm];
     
     if (feed.currentLocationID.length == 0)
-        return nil;
+    {
+        return [[SWNLocation allObjectsInRealm:realm] firstObject];
+    }
     
     if ([feed.currentLocationID isEqualToString:kSWNAutoLocationID])
         return [SWNAutoLocation objectInRealm:realm forPrimaryKey:kSWNAutoLocationID];

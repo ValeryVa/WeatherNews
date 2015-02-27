@@ -9,6 +9,7 @@
 #import "SWNAutoLocation.h"
 #import "SWNLocationInternal.h"
 #import <Realm/Realm.h>
+#import <CLLocationManager-blocks/CLLocationManager+blocks.h>
 
 @implementation SWNAutoLocation
 
@@ -32,7 +33,7 @@ NSString* const kSWNAutoLocationID = @"AutoLocation";
 
 - (BOOL)showsLocationIcon
 {
-    return YES;
+    return [CLLocationManager isLocationUpdatesAvailable];
 }
 
 

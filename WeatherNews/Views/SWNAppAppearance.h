@@ -9,6 +9,8 @@
 @import Foundation;
 @import UIKit;
 
+extern NSString* const kSWNStatusBarNotificationStyle;
+
 @interface SWNAppAppearance : NSObject
 
 + (void)configure;

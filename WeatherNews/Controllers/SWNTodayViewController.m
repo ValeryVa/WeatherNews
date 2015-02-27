@@ -11,11 +11,15 @@
 #import "SWNWeatherFeed.h"
 #import "SWNWeatherCondition.h"
 
+#import "UIViewController+SWNAdditions.h"
 #import "NSUserDefaults+Weather.h"
 #import "SWNCustomActivityItemProvider.h"
 
+#import <Masonry/Masonry.h>
 #import <Realm/Realm.h>
 #import <extobjc.h>
+#import <CLLocationManager-blocks/CLLocationManager+blocks.h>
+#import <AFNetworking/AFNetworkReachabilityManager.h>
 
 @interface SWNTodayViewController()
 
@@ -30,14 +34,39 @@
 @property (weak, nonatomic) IBOutlet UILabel *windDirectionLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *conditionImageView;
 
-
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingActivityIndicator;
+@property (nonatomic, strong, readonly) UILabel* noDataLabel;
 
 @property (nonatomic, strong) RLMNotificationToken* realmToken;
 @property (nonatomic, strong) id userDefaultsObserver;
+@property (nonatomic) BOOL canShowAlerts;
 
 @end
 
 @implementation SWNTodayViewController
+
+@synthesize noDataLabel = _noDataLabel;
+
+- (UILabel *)noDataLabel
+{
+    if (_noDataLabel == nil)
+    {
+        _noDataLabel = [[self class] createEmptyDataSourceLabel];
+        
+        [self.view addSubview:_noDataLabel];
+        
+        UIView* superview = self.view;
+        [_noDataLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            
+            make.centerY.equalTo(superview);
+            make.left.equalTo(superview.mas_left).with.offset(10);
+            make.right.equalTo(superview.mas_right).with.offset(-10);
+
+            
+        }];
+    }
+    return _noDataLabel;
+}
 
 - (void)dealloc
 {
@@ -51,6 +80,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.canShowAlerts = YES;
     
     SWNWeatherFeed* feed = [SWNWeatherFeed feed];
     [self updateUIWithWeatherFeed:feed];
@@ -78,20 +109,53 @@
     }];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (self.canShowAlerts)
+    {
+        if ([CLLocationManager isLocationUpdatesAvailable] == NO)
+        {
+            [self showLocationServicesErrorWithCallback:nil];
+        }
+        
+        self.canShowAlerts = NO;
+    }
+    
+    if ([[AFNetworkReachabilityManager sharedManager] isReachable] == NO)
+    {
+        [self showInternetConnectionErrorAsAlert:NO];
+    }
+}
+
 - (void)updateUIWithWeatherFeed:(SWNWeatherFeed*)feed
 {
     SWNLocation* location = [feed fetchCurrentLocation];
     BOOL isDataInvalid = location == nil || location.forecast.count == 0;
     
     if (self.todayContainer.hidden)
+    {
         self.todayContainer.hidden = isDataInvalid;
+        self.noDataLabel.hidden = !isDataInvalid;
+        
+        if (isDataInvalid)
+            [self.loadingActivityIndicator startAnimating];
+        else
+            [self.loadingActivityIndicator stopAnimating];
+    }else
+    {
+        self.noDataLabel.hidden = YES;
+        [self.loadingActivityIndicator stopAnimating];
+    }
+
     if (isDataInvalid == NO)
     {
         SWNWeatherCondition* condition = location.currentCondition;
         if (condition)
         {
             self.locationNameLabel.text = location.fullLocationName;
-            self.autoLocationIconImageView.hidden = ![location isKindOfClass:[SWNAutoLocation class]];
+            self.autoLocationIconImageView.hidden = !([location isKindOfClass:[SWNAutoLocation class]] && [CLLocationManager isLocationUpdatesAvailable]);
             
             SWNUnitOfTemperatureType temperatureType = [NSUserDefaults standardUserDefaults].unitOfTemperature;
             BOOL isInCelcius = temperatureType == SWNUnitOfTemperatureCelsius;
@@ -122,7 +186,7 @@
 - (NSString*)sharingText
 {
     SWNWeatherFeed* feed = [SWNWeatherFeed feed];
-    SWNAutoLocation* location = feed.autoLocation;
+    SWNLocation* location = [feed fetchCurrentLocation];
     
     if (location == nil)
         return nil;

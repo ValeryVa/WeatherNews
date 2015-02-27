@@ -54,11 +54,23 @@
 #define COCOAPODS_VERSION_MINOR_CLLocationManager_blocks 3
 #define COCOAPODS_VERSION_PATCH_CLLocationManager_blocks 2
 
+// JDStatusBarNotification
+#define COCOAPODS_POD_AVAILABLE_JDStatusBarNotification
+#define COCOAPODS_VERSION_MAJOR_JDStatusBarNotification 1
+#define COCOAPODS_VERSION_MINOR_JDStatusBarNotification 5
+#define COCOAPODS_VERSION_PATCH_JDStatusBarNotification 0
+
 // KVOController
 #define COCOAPODS_POD_AVAILABLE_KVOController
 #define COCOAPODS_VERSION_MAJOR_KVOController 1
 #define COCOAPODS_VERSION_MINOR_KVOController 0
 #define COCOAPODS_VERSION_PATCH_KVOController 3
+
+// Masonry
+#define COCOAPODS_POD_AVAILABLE_Masonry
+#define COCOAPODS_VERSION_MAJOR_Masonry 0
+#define COCOAPODS_VERSION_MINOR_Masonry 6
+#define COCOAPODS_VERSION_PATCH_Masonry 0
 
 // NSUserDefaults+Property
 #define COCOAPODS_POD_AVAILABLE_NSUserDefaults_Property
